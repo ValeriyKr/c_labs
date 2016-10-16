@@ -80,7 +80,7 @@ int list_add_back(list_t *list, T data) {
 }
 
 /* Returns node by index or NULL if fails. */
-static list_elem_t* list_node_at(list_t *list, size_t i) {
+static list_elem_t* list_node_at(const list_t *list, size_t i) {
     list_elem_t *curr;
     if (NULL == list) return NULL;
     for (curr = list->head; i && curr->next; i--, curr = curr->next);
@@ -92,7 +92,7 @@ static list_elem_t* list_node_at(list_t *list, size_t i) {
 
 
 /* Return data in node[i]. Sets non-zero in err, if fails */
-T list_get(list_t *list, size_t i, int *err) {
+T list_get(const list_t *list, size_t i, int *err) {
     list_elem_t *node;
     if (NULL == list) {
         *err = 1;
@@ -108,12 +108,12 @@ T list_get(list_t *list, size_t i, int *err) {
 }
 
 
-size_t list_length(list_t *list) {
+size_t list_length(const list_t *list) {
     return NULL == list ? 0 : list->size;
 }
 
 
-T list_sum(list_t *list) {
+T list_sum(const list_t *list) {
     list_elem_t *curr;
     T sum = 0;
     if (NULL == list) return 0;
