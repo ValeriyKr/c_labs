@@ -5,7 +5,6 @@
 #include <stdlib.h>
 
 typedef int T;
-typedef struct list_elem_t list_elem_t;
 typedef struct list_t list_t;
 
 list_t* list_create();
