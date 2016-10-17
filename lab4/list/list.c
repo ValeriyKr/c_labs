@@ -4,6 +4,7 @@
 typedef int T;
 typedef struct list_t {
     struct list_t *next;
+    size_t refs;
     T data;
 } list_t;
 
@@ -11,6 +12,7 @@ typedef struct list_t {
 list_t* list_create() {
     list_t *list = (list_t*) malloc(sizeof(list_t));
     list->next = NULL;
+    list->refs = 1;
     return list;
 }
 
@@ -20,7 +22,9 @@ void list_free(list_t *list) {
     if (NULL == list) return;
     for (; list->next; list = next) {
         next = list->next;
-        free(list);
+        list->refs--;
+        if (!list->refs)
+            free(list);
     }
     list = NULL;
 }
@@ -57,6 +61,17 @@ static list_t* list_node_at(const list_t *list, size_t i) {
         return NULL;
     }
     return (list_t*) list;
+}
+
+/* Returns sublist of list from i to end or NULL if fails */
+list_t* list_tail(const list_t *list, size_t i) {
+    list_t *head = list_node_at(list, i);
+    list_t *sublist;
+    if (NULL == head) return NULL;
+    sublist = list_create();
+    sublist->next = head;
+    for (; head->next; head = head->next) head->refs++;
+    return sublist;
 }
 
 
