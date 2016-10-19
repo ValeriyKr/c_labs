@@ -13,8 +13,18 @@ void print_int_nl(int n) {
 }
 
 
+int square(int n) {
+    return n*n;
+}
+
+
+int cubic(int n) {
+    return n*n*n;
+}
+
+
 int main() {
-    list_t *list = list_create();
+    list_t *list = list_create(), *new_list;
     size_t count;
     int err;
 
@@ -34,7 +44,17 @@ int main() {
     list_foreach(list, print_int_space);
     puts("");
     list_foreach(list, print_int_nl);
+    if (NULL == (new_list = list_map(list, square))) {
+        list_free(list);
+        fputs("Error while mapping list\n", stderr);
+        return 0;
+    }
+    list_foreach(new_list, print_int_space);
+    list_map_mut(list, cubic);
+    puts("");
+    list_foreach(list, print_int_space);
 
+    list_free(new_list);
     list_free(list);
     puts("Bye");
 
