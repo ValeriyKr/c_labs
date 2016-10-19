@@ -4,8 +4,10 @@
 
 #include <stdlib.h>
 
+#ifndef _LIST_T_
 typedef int T;
 typedef struct list_t list_t;
+#endif
 
 list_t* list_create();
 int list_add_front(list_t *, T);
