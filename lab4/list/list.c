@@ -50,6 +50,7 @@ int list_add_back(list_t *list, T data) {
     node->data = data;
     for (; list->next; list = list->next);
     list->next = node;
+    node->refs = list->refs;
     return 0;
 }
 
