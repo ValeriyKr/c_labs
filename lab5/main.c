@@ -1,5 +1,6 @@
 /* Made by ValeriyKr */
 #include <stdio.h>
+#include <limits.h>
 
 #include "hof.h"
 
@@ -23,8 +24,28 @@ int cubic(int n) {
 }
 
 
+int sum(int a, int b) {
+    return a+b;
+}
+
+
+int min(int a, int b) {
+    return a < b ? a : b;
+}
+
+
+int max(int a, int b) {
+    return a < b ? b : a;
+}
+
+
+int mul_at_2(int n) {
+    return 2*n;
+}
+
+
 int main() {
-    list_t *list = list_create(), *new_list;
+    list_t *list = list_create(), *new_list, *degrees;
     size_t count;
     int err;
 
@@ -54,9 +75,22 @@ int main() {
     puts("");
     list_foreach(list, print_int_space);
 
+    puts("\nNew list:");
+    list_foreach(new_list, print_int_space);
+    printf("\nSum: %d\n", list_foldl(new_list, sum, 0));
+    printf("Min: %d\n", list_foldl(new_list, min, INT_MAX));
+    printf("Max: %d\n", list_foldl(new_list, max, INT_MIN));
+
     list_free(new_list);
     list_free(list);
-    puts("Bye");
+
+    if (NULL != (degrees = list_iterate(10, mul_at_2, 2))) {
+        puts("Degrees:");
+        list_foreach(degrees, print_int_space);
+        list_free(degrees);
+    }
+
+    puts("\nBye");
 
     return 0;
 }

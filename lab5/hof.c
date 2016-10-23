@@ -42,3 +42,32 @@ void list_map_mut(list_t *list, T (*f)(T)) {
     for (list = list->next; list; list = list->next)
         list->data = f(list->data);
 }
+
+
+T list_foldl(const list_t *list, T (*f)(T, T), T accum) {
+    if (NULL == list) return accum;
+    for (list = list->next; list; list = list->next)
+        accum = f(accum, list->data);
+    return accum;
+}
+
+
+list_t* list_iterate(size_t len, T (*f)(T), T accum) {
+    list_t *list, *curr;
+    if (0 == len || NULL == (list = list_create()))
+        return NULL;
+    if (NULL == (list->next = list_create())) {
+        list_free(list);
+        return NULL;
+    }
+    curr = list->next;
+    curr->data = accum;
+    for (len--; len; len--, curr = curr->next) {
+        if (NULL == (curr->next = list_create())) {
+            list_free(list);
+            return NULL;
+        }
+        curr->next->data = f(curr->data);
+    }
+    return list;
+}

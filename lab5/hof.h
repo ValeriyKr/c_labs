@@ -7,5 +7,7 @@
 void list_foreach(const list_t *, void (*)(T));
 list_t* list_map(const list_t *, T (*)(T));
 void list_map_mut(list_t *, T (*)(T));
+T list_foldl(const list_t *, T (*)(T, T), T);
+list_t* list_iterate(size_t, T (*)(T), T);
 
 #endif /* _HOF_H_ */
