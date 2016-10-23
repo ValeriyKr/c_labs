@@ -4,13 +4,20 @@
 
 #include "hof.h"
 
-void print_int_space(int n) {
+void print_int_space(int n, size_t argc, void **argv) {
     printf("%d ", n);
 }
 
 
-void print_int_nl(int n) {
+void print_int_nl(int n, size_t argc, void **argv) {
     printf("%d\n", n);
+}
+
+
+void print_int_incremented_multiplied(int n, size_t argc, void **argv) {
+    n += *((int*) *argv);
+    n *= ((int*) *argv)[1];
+    printf("%d ", n);
 }
 
 
@@ -62,21 +69,30 @@ int main() {
             return 0;
         }
     }
-    list_foreach(list, print_int_space);
+    list_foreach(list, print_int_space, 0, NULL);
     puts("");
-    list_foreach(list, print_int_nl);
+    list_foreach(list, print_int_nl, 0, NULL);
+    {
+        void *argv = malloc(sizeof(int)*2);
+        ((int*) argv)[0] = 2;
+        ((int*) argv)[1] = 4;
+        puts("\nIncremented (2) and multiplied (4):");
+        list_foreach(list, print_int_incremented_multiplied, 1, &argv);
+        puts("\n");
+        free(argv);
+    }
     if (NULL == (new_list = list_map(list, square))) {
         list_free(list);
         fputs("Error while mapping list\n", stderr);
         return 0;
     }
-    list_foreach(new_list, print_int_space);
+    list_foreach(new_list, print_int_space, 0, NULL);
     list_map_mut(list, cubic);
     puts("");
-    list_foreach(list, print_int_space);
+    list_foreach(list, print_int_space, 0, NULL);
 
     puts("\nNew list:");
-    list_foreach(new_list, print_int_space);
+    list_foreach(new_list, print_int_space, 0, NULL);
     printf("\nSum: %d\n", list_foldl(new_list, sum, 0));
     printf("Min: %d\n", list_foldl(new_list, min, INT_MAX));
     printf("Max: %d\n", list_foldl(new_list, max, INT_MIN));
@@ -86,7 +102,7 @@ int main() {
 
     if (NULL != (degrees = list_iterate(10, mul_at_2, 2))) {
         puts("Degrees:");
-        list_foreach(degrees, print_int_space);
+        list_foreach(degrees, print_int_space, 0, NULL);
         list_free(degrees);
     }
 

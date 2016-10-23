@@ -4,7 +4,7 @@
 
 #include "../lab4/list.h"
 
-void list_foreach(const list_t *, void (*)(T));
+void list_foreach(const list_t *, void (*)(T, size_t, void **), size_t, void **);
 list_t* list_map(const list_t *, T (*)(T));
 void list_map_mut(list_t *, T (*)(T));
 T list_foldl(const list_t *, T (*)(T, T), T);

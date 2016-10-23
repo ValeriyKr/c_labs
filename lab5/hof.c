@@ -12,10 +12,12 @@ typedef struct list_t {
 #include "hof.h"
 
 
-void list_foreach(const list_t *list, void (*f)(T)) {
+void
+list_foreach(const list_t *list, void (*f)(T, size_t, void **),
+             size_t argc, void **argv) {
     if (NULL == list) return;
     for (list = list->next; list; list = list->next)
-        f(list->data);
+        f(list->data, argc, argv);
 }
 
 
