@@ -1,7 +1,7 @@
 # Made by ValeriyKr #
 CC = gcc
 CFLAGS = -c -ansi -Wall -Wextra -Wpedantic
-SOURCES = main.c bmp.c
+SOURCES = main.c bmp.c image.c
 OBJECTS = $(SOURCES:.c=.o)
 EXECUTABLE = main
 
