@@ -15,8 +15,8 @@ typedef struct pixel_t {
 
 
 /* height and width of image in pixels.
- * Access to data by .at().
- * from_*() must put .at() into this field
+ * Access to data by .at() and .at_const()
+ * from_*() must put .at() and .at_const() functions into this fields
  * When work is done, destroying image must be accompanied .destroy() call.
  */
 typedef struct image_t {
