@@ -69,8 +69,10 @@ read_error_code_t from_bmp(FILE *in, image_t *img) {
     if (NULL == (img->data = (pixel_t*) malloc(img_size)))
         return READ_ALLOC_ERROR;
     fseek(in, header.bOffBits, SEEK_SET);
-    if (img_size/sizeof(pixel_t) != fread(img->data, sizeof(pixel_t), img_size/sizeof(pixel_t), in))
+    if (img_size/sizeof(pixel_t) != fread(img->data, sizeof(pixel_t), img_size/sizeof(pixel_t), in)) {
+        free(img->data);
         return READ_INVALID_FILE;
+    }
 
     return READ_OK;
 }

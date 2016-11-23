@@ -9,7 +9,7 @@ void rotate_test(const char *name_in, const char *name_out) {
     read_error_code_t rstatus;
     write_error_code_t wstatus;
     FILE *in = fopen(name_in, "r");
-    FILE *out = fopen(name_out, "w");
+    FILE *out;
     image_t img, img_rotated;
     if (NULL == in) {
         perror("File opening error");
@@ -22,6 +22,7 @@ void rotate_test(const char *name_in, const char *name_out) {
 
     img_rotated = img_rotate(&img);
 
+    out = fopen(name_out, "w");
     if (WRITE_OK != (wstatus = to_bmp(out, &img_rotated))) {
         log_write(wstatus);
     }
