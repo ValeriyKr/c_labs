@@ -4,27 +4,37 @@
 
 #include "image.h"
 
-int main() {
+
+void rotate_test(const char *name_in, const char *name_out) {
     read_error_code_t rstatus;
-    FILE *in = fopen("test.bmp", "r");
-    FILE *out = fopen("result.bmp", "w");
+    write_error_code_t wstatus;
+    FILE *in = fopen(name_in, "r");
+    FILE *out = fopen(name_out, "w");
     image_t img, img_rotated;
     if (NULL == in) {
         perror("File opening error");
-        return 0;
+        return;
     }
     if (READ_OK != (rstatus = from_bmp(in, &img))) {
         log_read(rstatus);
-        return 0;
+        return;
     }
-    img.at(&img, 1, 1);
 
     img_rotated = img_rotate(&img);
 
-    to_bmp(out, &img_rotated);
+    if (WRITE_OK != (wstatus = to_bmp(out, &img_rotated))) {
+        log_write(wstatus);
+    }
     img.destroy(&img); 
     img_rotated.destroy(&img_rotated);
+    fclose(in);
+    fclose(out);
+}
 
+
+int main() {
+    rotate_test("test.bmp", "result.bmp");
+    rotate_test("test2.bmp", "result2.bmp");
 
     return 0;
 }

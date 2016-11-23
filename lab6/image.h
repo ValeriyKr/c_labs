@@ -9,7 +9,9 @@
 
 #pragma pack(push, 1)
 typedef struct pixel_t {
-    int8_t r, g, b;
+    uint8_t b;
+    uint8_t g;
+    uint8_t r;
 } pixel_t;
 #pragma pack(pop)
 
@@ -48,5 +50,6 @@ image_t img_rotate(const image_t *source);
 write_error_code_t to_bmp(FILE *out, image_t *img);
 
 void log_read(read_error_code_t err);
+void log_write(write_error_code_t err);
 
 #endif /* _IMAGE_H_ */

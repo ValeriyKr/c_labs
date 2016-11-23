@@ -26,19 +26,24 @@ typedef struct {
 #pragma pack(pop)
 
 
+static size_t bmp_row_length(uint32_t width) {
+    return 3*width + width % 4;
+}
+
+
 static pixel_t* bmp_at(image_t *this, size_t i, size_t j) {
     size_t row_length;
     if (NULL == this) return NULL;
-    row_length = this->width + (4 - this->width % 4) % 4;
-    return this->data + row_length*i + j;
+    row_length = bmp_row_length(this->width);
+    return (pixel_t*) ((char*) this->data + row_length*(this->height-i-1) + 3*j);
 }
 
 
 static const pixel_t* bmp_at_const(const image_t *this, size_t i, size_t j) {
     size_t row_length;
     if (NULL == this) return NULL;
-    row_length = this->width + (4 - this->width % 4) % 4;
-    return this->data + row_length*i + j;
+    row_length = bmp_row_length(this->width);
+    return (pixel_t*) ((char*) this->data + row_length*(this->height-i-1) + 3*j);
 }
 
 
@@ -50,6 +55,8 @@ static void bmp_destroy(image_t *this) {
 read_error_code_t from_bmp(FILE *in, image_t *img) {
     bmp_header_t header;
     size_t img_size;
+    /*printf("%d\n", 1 != fread(&header, sizeof(bmp_header_t), 1, in));*/
+    /*return READ_INVALID_HEADER;*/
     if (1 != fread(&header, sizeof(bmp_header_t), 1, in))
         return READ_INVALID_HEADER;
     img->width = header.biWidth;
@@ -58,7 +65,7 @@ read_error_code_t from_bmp(FILE *in, image_t *img) {
     img->at_const = bmp_at_const;
     img->destroy = bmp_destroy;
     img_size = header.biSizeImage - sizeof(bmp_header_t);
-    if (img_size % sizeof(pixel_t)) return READ_INVALID_HEADER;
+    if (!(img_size % 4)) return READ_INVALID_HEADER;
     if (NULL == (img->data = (pixel_t*) malloc(img_size)))
         return READ_ALLOC_ERROR;
     fseek(in, header.bOffBits, SEEK_SET);
@@ -72,8 +79,8 @@ read_error_code_t from_bmp(FILE *in, image_t *img) {
 write_error_code_t to_bmp(FILE *out, struct image_t *img) {
     bmp_header_t header;
     uint32_t row_length, i, j;
-    pixel_t void_pixel = {0, 0, 0};
-    row_length = img->width + (4 - img->width % 4) % 4;
+    char nul = '\0';
+    row_length = bmp_row_length(img->width);
     /* 19778
      * 60122
      * 0
@@ -91,16 +98,16 @@ write_error_code_t to_bmp(FILE *out, struct image_t *img) {
      * 0
      */
     header.bfType          = 19778;
-    header.bfileSize       = sizeof(bmp_header_t) + sizeof(pixel_t)*(img->height*row_length);
+    header.bfileSize       = sizeof(bmp_header_t) + sizeof(pixel_t)*img->height*row_length;
     header.bfReserved      = 0;
     header.bOffBits        = 54;
     header.biSize          = 40;
-    header.biWidth         = img->width;;
+    header.biWidth         = img->width;
     header.biHeight        = img->height;
     header.biPlanes        = 1;
     header.biBitCount      = 24;
     header.biCompression   = 0;
-    header.biSizeImage     = sizeof(pixel_t) * (img->height * row_length);
+    header.biSizeImage     = sizeof(pixel_t) * img->height * row_length;
     header.biXPelsPerMeter = 2835;
     header.biYPelsPerMeter = 2835;
     header.biClrUsed       = 0;
@@ -109,9 +116,8 @@ write_error_code_t to_bmp(FILE *out, struct image_t *img) {
     fseek(out, sizeof(header), SEEK_SET);
     for (i = 0; i < img->height; ++i) {
         for (j = 0; j < img->width; ++j) 
-            fwrite(img->at(img, i, j), 3, 1, out);
-        for (j = 0; j < (4 - img->width % 4) % 4; j++)
-            fwrite(&void_pixel, 3, 1, out);
+            fwrite(img->at_const(img, img->height-i-1, j), 3, 1, out);
+        fwrite(&nul, 1, img->width % 4, out);
     }
     return WRITE_OK;
 }
