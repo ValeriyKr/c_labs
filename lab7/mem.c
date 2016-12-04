@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <assert.h>
 
 #include "mem.h"
 
@@ -103,4 +104,24 @@ void* _malloc(size_t query) {
 
 
 void _free(void *mem) {
+    struct mem_t *addr, *parent;
+    if (NULL == mem) return;
+    addr = ((struct mem_t *) mem) - 1;
+    if (addr != root_block && addr->is_root) {
+        for (parent = root_block; parent->next && parent->next != addr;
+                parent = parent->next);
+        assert(parent->next == addr);
+        parent->next = addr->next;
+        munmap(addr, addr->capacity + sizeof(struct mem_t));
+        blocks_count--;
+        return;
+    }
+    addr->is_free = IS_FREE;
+    blocks_count--;
+    if (addr->next && addr->next->is_free && !addr->next->is_root) {
+        addr->capacity += addr->next->capacity + sizeof(struct mem_t);
+        addr->next = addr->next->next;
+        blocks_count--;
+    }
+    if (blocks_count < 1) munmap(root_block, root_heap_size);
 }
