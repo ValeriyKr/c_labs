@@ -10,6 +10,9 @@
 #include <sys/mman.h>
 
 #define HEAP_START ((void*)0x04040000)
+#define HEAP_SIZE 0x800000ul
+#define IS_ROOT 1
+#define IS_FREE 1
 
 struct mem_t;
 
@@ -18,6 +21,7 @@ struct mem_t {
     struct mem_t* next;
     size_t capacity;
     int is_free;
+    int is_root;
 };
 #pragma pack(pop)
 
