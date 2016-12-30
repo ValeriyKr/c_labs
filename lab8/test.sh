@@ -1,5 +1,24 @@
 #!/bin/bash
 
+if [ 1 -ne $# ]
+then
+    echo "Usage: ${0} <count>"
+    exit
+fi
+
+if [ ! -f ./main ]
+then
+    echo "Trying to make project…"
+    make clean
+    make
+    status=$?
+    if [ $status -ne 0 ]
+    then
+        echo "Cannot build project!"
+        exit $status
+    fi
+fi
+
 echo "" > time
 
 for i in `seq $1`
