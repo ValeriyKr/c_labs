@@ -8,7 +8,7 @@ fi
 
 if [ ! -f ./main ]
 then
-    echo "Trying to make project…"
+    echo "Trying to build project…"
     make clean
     make
     status=$?
