@@ -36,6 +36,7 @@ BEGIN {
 } 
 END {
     print "Tests count:", n
+    print "Total user time:", sum
     print "Average user time:", sum/n
 }' ./time
 rm time
