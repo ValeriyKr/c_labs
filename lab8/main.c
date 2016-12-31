@@ -63,8 +63,9 @@ void sepia_test(const char *name_in, const char *name_out) {
 int main() {
     /*rotate_test("test.bmp", "result.bmp");*/
     /*rotate_test("test2.bmp", "result2.bmp");*/
-    sepia_test("test3.bmp", "result3.bmp");
-    sepia_test("test4.bmp", "result4.bmp");
+    /*sepia_test("test3.bmp", "result3.bmp");*/
+    /*sepia_test("test4.bmp", "result4.bmp");*/
+    sepia_test("test5.bmp", "result5.bmp");
 
     return 0;
 }

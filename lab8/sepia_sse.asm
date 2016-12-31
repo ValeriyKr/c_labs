@@ -13,7 +13,6 @@ align 16
 ;filter: dd 0.0, 0.0, 0.0, 0.0
 filter: dd 255.0, 255.0, 255.0, 255.0
 
-
 %macro proc4vals 1
     movq xmm0, [rdi]
     movq xmm1, [rsi]
@@ -28,7 +27,7 @@ filter: dd 255.0, 255.0, 255.0, 255.0
     addps xmm0, xmm2    ; r += b
     ; Thresholding
     pminsw xmm0, xmm6
-    movdqa [rel rcx], xmm0
+    movdqa [rcx], xmm0
 %endmacro
 
 

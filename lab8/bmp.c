@@ -77,12 +77,9 @@ read_error_code_t from_bmp(FILE *in, image_t *img) {
     return READ_OK;
 }
 
-
-write_error_code_t to_bmp(FILE *out, struct image_t *img) {
-    bmp_header_t header;
-    uint32_t row_length, i, j;
-    char nul = '\0';
-    row_length = bmp_row_length(img->width);
+static void bmp_fill_header(struct image_t *img,
+        bmp_header_t *header) {
+    uint32_t row_length = bmp_row_length(img->width);
     /* 19778
      * 60122
      * 0
@@ -99,21 +96,29 @@ write_error_code_t to_bmp(FILE *out, struct image_t *img) {
      * 0
      * 0
      */
-    header.bfType          = 19778;
-    header.bfileSize       = sizeof(bmp_header_t) + sizeof(pixel_t)*img->height*row_length;
-    header.bfReserved      = 0;
-    header.bOffBits        = 54;
-    header.biSize          = 40;
-    header.biWidth         = img->width;
-    header.biHeight        = img->height;
-    header.biPlanes        = 1;
-    header.biBitCount      = 24;
-    header.biCompression   = 0;
-    header.biSizeImage     = sizeof(pixel_t) * img->height * row_length;
-    header.biXPelsPerMeter = 2835;
-    header.biYPelsPerMeter = 2835;
-    header.biClrUsed       = 0;
-    header.biClrImportant  = 0;
+    header->bfType          = 19778;
+    header->bfileSize       = sizeof(bmp_header_t) + sizeof(pixel_t)
+                              * img->height * row_length;
+    header->bfReserved      = 0;
+    header->bOffBits        = 54;
+    header->biSize          = 40;
+    header->biWidth         = img->width;
+    header->biHeight        = img->height;
+    header->biPlanes        = 1;
+    header->biBitCount      = 24;
+    header->biCompression   = 0;
+    header->biSizeImage     = sizeof(pixel_t) * img->height * row_length;
+    header->biXPelsPerMeter = 2835;
+    header->biYPelsPerMeter = 2835;
+    header->biClrUsed       = 0;
+    header->biClrImportant  = 0;
+}
+
+write_error_code_t to_bmp(FILE *out, struct image_t *img) {
+    bmp_header_t header;
+    uint32_t i, j;
+    char nul = '\0';
+    bmp_fill_header(img, &header);
     fwrite(&header, sizeof(header), 1, out);
     fseek(out, sizeof(header), SEEK_SET);
     for (i = 0; i < img->height; ++i) {
